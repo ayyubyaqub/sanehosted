@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-gto(ng2vaa_z7en3_%w4c!i5ibzlycp6oim8+)rolj*yjvn14c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*','13.233.84.26','test.saneobserver.ai','15.207.109.170','saneobserver.ai']
+ALLOWED_HOSTS = ['*','13.233.84.26','test.saneobserver.ai']
 
 
 # Application definition
@@ -82,12 +82,27 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+
+# DATABASES = {
+#     "default": {      
+        
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'saneobserver_database',
+#         'USER': 'shivamayyubraj',
+#         'PASSWORD': 'developedbyamosta',
+#         'HOST': 'database-1.cbzl07gxnei8.ap-south-1.rds.amazonaws.com',
+#         'PORT': '5432',
+#     }
+# }
+
 
 
 # Password validation
@@ -127,7 +142,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/assets/'
 STATIC_ROOT  = os.path.join(BASE_DIR, 'staticfiles')
 
 STATICFILES_DIRS = [
@@ -180,8 +195,3 @@ EMAIL_USE_SSL = False
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 #final test
-# REST_FRAMEWORK = {
-#     'DEFAULT_AUTHENTICATION_CLASSES': [
-#         'rest_framework.authentication.TokenAuthentication',
-#     ]
-# }
