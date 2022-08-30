@@ -9,8 +9,7 @@ from .helpers import *
 from django.contrib.auth import login #authenticate
 from rest_framework import status
 from django.db.models import Q
-
-
+from rest_framework import viewsets
 def authenticate(username=None, password=None,):
     try:
         user = User.objects.get(
@@ -28,17 +27,18 @@ def authenticate(username=None, password=None,):
 class  RegisterView(APIView):
     def post(self,request):
         print('i am here 30')
+        print(request.data)
         try:
             serializer=UserSerializer(data=request.data)
             if not serializer.is_valid():
-                print(16)
+                print(serializer.errors,34)
                 return JsonResponse(
                     {
                         'status':403,
-                        'errors':serializer.errors
+                        'error':str(serializer.errors)
                     }
                 )
-            print(16)
+            print('OK')
             serializer.save()
             return JsonResponse(
                     {
@@ -60,6 +60,7 @@ class LoginView(APIView):
     def get(self , request):
         if request.user.is_authenticated:
             userserializer=UserSerializer(request.user)
+            print(userserializer.data['id'],12)
             return JsonResponse({'status':True,'user_data':userserializer.data})
         return JsonResponse({'status':False})
 
@@ -67,9 +68,7 @@ class LoginView(APIView):
         data = request.data
         print(data)
         username = data.get('username', None)
-        password = data.get('password', None)
-        print(username)
-        print(password)
+        password = data.get('login_password', None)
         user = authenticate(username=username, password=password)
         print(user,16)
         if user is not None:
@@ -77,6 +76,7 @@ class LoginView(APIView):
                 login(request, user)
                 userserializer=UserSerializer(user)
                 print(userserializer.data)
+
                 return JsonResponse({'status':True,'user_data':userserializer.data})
             else:
                 return JsonResponse({
@@ -97,8 +97,6 @@ class VerifyOtp(APIView):
             print(data)
             user_obj=User.objects.get(phone=data.get('phone'))
             otp=data.get('otp')
-            print(otp)
-
             if user_obj.otp == otp:
                 user_obj.is_phone_varified=True
                 user_obj.save()
@@ -138,3 +136,344 @@ class VerifyOtp(APIView):
                 })    
         except Exception as e:
             print(e)
+
+
+class educationdetail(APIView):
+    def get(self,request,pk=None):
+        print(pk)
+        if pk != None:
+            print(pk,306)
+            skills=Education_detail.objects.filter(user__id=pk)
+            skillsdata=Education_detailSerializer(skills,many=True)
+            return JsonResponse(
+                    {
+                        'status':200,
+                        'data':skillsdata.data
+                        
+                    }
+                )
+        educationdetaildata=Education_detail.objects.all()
+        educationdetaildata=Education_detailSerializer(educationdetaildata,many=True)
+        return JsonResponse(
+                    {
+                        'status':200,
+                        'data':educationdetaildata.data
+                        
+                    }
+                )
+
+    def post(self,request):
+        data=request.data
+        print(data)
+    
+        try:
+            serializer=Education_detailSerializer(data=data)
+            if not serializer.is_valid():
+                print(serializer.errors)
+                return JsonResponse(
+                    {
+                        'status':403,
+                        'errors':serializer.errors
+                        
+                    }
+                )
+            print('OK')
+            resp=serializer.save()
+           
+            return JsonResponse(
+                    {
+                        'status':200, 
+                        'msg':'Your Education detail is saved'
+                     }
+                )
+        except Exception as e :
+            print(178)
+            print(e,179)    
+            return JsonResponse(
+                {
+                    'status':404,
+                    'error':'something went wrong'
+                }
+            )
+    
+
+    def delete(self, request,pk):
+   
+        edu_detail=Education_detail.objects.get(id=pk)
+        edu_detail.delete()
+        return JsonResponse(
+                    {
+                        'status':200,
+                        'data':'congratulations you are in delete'
+                        
+                    }
+                )
+
+    def put(self, request, pk, format=None):
+        educationdetail = Education_detail.objects.get(id=pk)
+    
+        try:
+            serializer = Education_detailSerializer(educationdetail, data=request.data)
+        except Exception as e:  
+            print(e)
+            pass
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse({'status':True,'user_data':serializer.data})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+class skill(APIView):
+    def get(self,request,pk=None):
+        print(304)
+        if pk != None:
+            print(pk,306)
+            skills=Skill.objects.filter(user__id=pk)
+            skillsdata=SkillSerializer(skills,many=True)
+            return JsonResponse(
+                    {
+                        'status':200,
+                        'data':skillsdata.data
+                        
+                    }
+                )
+
+        skills=Skill.objects.all()
+        skillsdata=SkillSerializer(skills,many=True)
+        return JsonResponse(
+                    {
+                        'status':200,
+                        'data':skillsdata.data
+                        
+                    }
+                )
+
+    def post(self,request):
+        data=request.data 
+        print(data)   
+        try:
+            serializer=SkillSerializer(data=data)
+            if not serializer.is_valid():
+                print(serializer.errors)
+                return JsonResponse(
+                    {
+                        'status':403,
+                        'errors':serializer.errors
+                        
+                    }
+                )
+            resp=serializer.save()
+           
+            return JsonResponse(
+                    {
+                        'status':200, 
+                        'msg':'Your skill detail is saved'
+                     }
+                )
+        except Exception as e :
+            print(178)
+            print(e,179)    
+            return JsonResponse(
+                {
+                    'status':404,
+                    'error':'something went wrong'
+                }
+            )
+    
+
+    def delete(self, request,pk):
+        print(pk)   
+        skill=Skill.objects.get(id=pk)
+        skill.delete()
+        return JsonResponse(
+                    {
+                        'status':200,
+                        'data':' your project detail is deleted'
+                        
+                    }
+                )
+
+    def put(self, request, pk, format=None):
+        skilldetail = Skill.objects.get(id=pk)
+        try:
+            serializer = Education_detailSerializer(skilldetail, data=request.data)
+
+        except Exception as e:  
+            print(e)
+            pass
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse({'status':True,'updated_skill':serializer.data})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)         
+
+
+
+
+class professional_Detail(APIView):
+    def get(self,request,pk=None):
+        print(319)
+        if pk != None:
+            print(pk,321)
+            skills=professional_detail.objects.filter(user__id=pk)
+            skillsdata=ProfessionalDetailSerializer(skills,many=True)
+            return JsonResponse(
+                    {
+                        'status':200,
+                        'data':skillsdata.data
+                        
+                    }
+                )
+        
+        prof_detail=professional_detail.objects.all()
+        skillsdata=ProfessionalDetailSerializer(prof_detail,many=True)
+        return JsonResponse(
+                    {
+                        'status':200,
+                        'data':skillsdata.data
+                        
+                    }
+                )
+
+    def post(self,request):
+        data=request.data
+        print(data)
+    
+        try:
+            serializer=ProfessionalDetailSerializer(data=data)
+            if not serializer.is_valid():
+                print(serializer.errors)
+                return JsonResponse(
+                    {
+                        'status':403,
+                        'errors':serializer.errors
+                        
+                    }
+                )
+            resp=serializer.save()
+           
+            return JsonResponse(
+                    {
+                        'status':200, 
+                        'msg':'Your professional detail is saved'
+                     }
+                )
+        except Exception as e :
+            print(178)
+            print(e,179)    
+            return JsonResponse(
+                {
+                    'status':404,
+                    'error':'something went wrong'
+                }
+            )
+    
+
+    def delete(self, request,pk):
+        print(pk)   
+        prof_detail=professional_detail.objects.get(id=pk)
+        prof_detail.delete()
+        return JsonResponse(
+                    {
+                        'status':200,
+                        'data':' your professional detail is deleted'
+                        
+                    }
+                )
+
+    def put(self, request, pk, format=None):
+        prof_detail = professional_detail.objects.get(id=pk)
+        try:
+            serializer = Education_detailSerializer(prof_detail, data=request.data)
+
+        except Exception as e:  
+            print(e)
+            pass
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse({'status':True,'updated_skill':serializer.data})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)         
+
+
+
+class user_project_view(APIView):
+    def get(self,request,pk=None):
+        print(406)
+        if pk != None:
+            print(pk,408)
+            userproject=user_project.objects.filter(user__id=pk)
+            userprojectdata=User_projectSerializer(userproject,many=True)
+            return JsonResponse(
+                    {
+                        'status':200,
+                        'data':userprojectdata.data
+                        
+                    }
+                )
+        
+        userproject=user_project.objects.all()
+        userprojectdata=User_projectSerializer(userproject,many=True)
+        return JsonResponse(
+                    {
+                        'status':200,
+                        'data':userprojectdata.data
+                        
+                    }
+                )
+
+    def post(self,request):
+        data=request.data
+    
+        try:
+            serializer=User_projectSerializer(data=data)
+            if not serializer.is_valid():
+                print(serializer.errors)
+                return JsonResponse(
+                    {
+                        'status':403,
+                        'errors':serializer.errors
+                        
+                    }
+                )
+            resp=serializer.save()
+            return JsonResponse(
+                    {
+                        'status':200, 
+                        'msg':'Your project detail is saved'
+                     }
+                )
+        except Exception as e : 
+            return JsonResponse(
+                {
+                    'status':404,
+                    'error':'something went wrong'
+                }
+            )
+    
+
+    def delete(self, request,pk):
+        print(pk)   
+        userproject=user_project.objects.get(id=pk)
+        userproject.delete()
+        return JsonResponse(
+                    {
+                        'status':200,
+                        'data':' your project detail is deleted'
+                        
+                    }
+                )
+
+    def put(self, request, pk, format=None):
+        prof_detail = user_project.objects.get(id=pk)
+        try:
+            serializer = User_projectSerializer(prof_detail, data=request.data)
+
+        except Exception as e:  
+            print(e)
+            pass
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse({'status':True,'updated_skill':serializer.data})
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)                 

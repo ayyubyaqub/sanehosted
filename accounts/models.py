@@ -1,3 +1,4 @@
+from pyexpat import model
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.db.models.signals import post_save
@@ -41,3 +42,41 @@ def send_email_token(sender ,instance , created ,**kwargs):
 
         except Exception as e:
             print(e)
+
+
+class Education_detail(models.Model):
+    user =models.ForeignKey(User,on_delete=models.CASCADE,related_name='education_details',null=True,blank=True)
+    school_name=models.CharField(max_length=100,null=True,blank=True)
+    qualification=models.CharField(max_length=100,null=True,blank=True)
+    board=models.CharField(max_length=100,null=True,blank=True)
+    field=models.CharField(max_length=100,null=True,blank=True)
+    From=models.DateField(null=True, blank=True)
+    to=models.DateField(null=True, blank=True)
+    grades=models.CharField(max_length=100,null=True,blank=True)
+    city=models.CharField(max_length=100,null=True,blank=True)
+  
+
+class professional_basic(models.Model):
+    pass
+
+class Skill(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE,related_name='skill')
+    skill=models.CharField(max_length=255,null=True,blank=True)
+
+
+class professional_detail(models.Model):
+    user =models.ForeignKey(User,on_delete=models.CASCADE,related_name='professionaldetail',null=True,blank=True)
+    company_name=models.CharField(max_length=255,null=True,blank=True)
+    designation=models.CharField(max_length=255,null=True,blank=True)
+    From=models.DateField(null=True, blank=True)
+    to=models.DateField(null=True, blank=True)
+    is_currently_working=models.BooleanField(default=False)
+    location=models.TextField(null=True,blank=True)
+    work_responsibility=models.TextField(null=True,blank=True)
+
+
+class user_project(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE,related_name='project')
+    project_title=models.CharField(max_length=255,null=True,blank=True)
+    project_desc=models.TextField()
+    project_link=models.TextField()

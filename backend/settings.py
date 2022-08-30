@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import os
 from pathlib import Path
-
+import rest_framework
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -82,7 +82,6 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -95,10 +94,10 @@ DATABASES = {
 #     "default": {      
         
 #         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'saneobserver_database',
-#         'USER': 'shivamayyubraj',
-#         'PASSWORD': 'developedbyamosta',
-#         'HOST': 'database-1.cbzl07gxnei8.ap-south-1.rds.amazonaws.com',
+#         'NAME': 'sane_db',
+#         'USER': 'postgres',
+#         'PASSWORD': 'saneobserver',
+#         'HOST': 'database-2.cbzl07gxnei8.ap-south-1.rds.amazonaws.com',
 #         'PORT': '5432',
 #     }
 # }
@@ -155,7 +154,6 @@ STATICFILES_DIRS = [
 
 
 
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
@@ -190,8 +188,23 @@ EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
 
-
 # testing
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 #final test
+
+CORS_ALLOWED_ORIGINS = [
+
+"http://localhost:3000",
+"http://192.168.1.201:3000",
+"http://127.0.0.1:3000",
+
+]
+
+
+
+
+REST_FRAMEWORK = {
+        'DEFAULT_AUTHENTICATION_CLASSES': (
+             'rest_framework.authentication.BasicAuthentication',
+        )}
